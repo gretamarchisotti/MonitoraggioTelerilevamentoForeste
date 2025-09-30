@@ -1,4 +1,4 @@
-# Google Earth Engine
+# Google Earth Engine (GEE)
 ## Manuale comandi
 
 Pannello di sinistra:
