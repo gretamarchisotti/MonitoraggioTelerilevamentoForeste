@@ -44,3 +44,6 @@ Reproject() permette di riscalare le immagini
 unitScale() scala i valori da 1 a 0.
 
 In GEE, come in qualsiasi altro linguaggio di programmazione, ci sono delle funzioni già disponibili e che possono essere usate dall’utente. Nel caso di linguaggi come R o Phyton, si parla di funzioni disponibili in librerie, cioè raccolte di funzioni sviluppate da altri utenti che le memorizzano e le mettono a disposizione, per esempio in piattaforme online come GitHub, e l’utente può scaricarle e usarle già pronte. Su GEE, il processo di condivisione delle librerie in maniera formale è un po’ più complesso: le librerie e le funzioni disponibili sono quelle che troviamo nel Docs; si possono però creare funzioni specifiche, cioè si definiscono in maniera chiara input e output.
+
+### Link utili
+https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel-2/composites/
