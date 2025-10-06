@@ -1,5 +1,4 @@
-# Google Earth Engine (GEE)
-## Manuale comandi
+# Manuale comandi di Google Earth Engine (GEE)
 
 **Pannello di sinistra**:
 +	Script -> NEW #Posso creare repository e file
