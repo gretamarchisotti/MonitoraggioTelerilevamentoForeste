@@ -67,7 +67,8 @@ Per vedere se funziona, devo usare: ```var composite2025 = calculateComposite(20
 ### Esportare una funzione
 Per esportare una funzione: ```exports.calculateComposite = calculateComposite```
 > Prima inserisco il nome della funzione, poi il nome che le voglio dare
-
+> 
+> Serve per rendere la funzione open access.
 ---
 ## Creare l'interfaccia utente
 ```js
@@ -243,5 +244,4 @@ ui.root.add(panel);
 Map.setOptions('SATELLITE')
 // Map.centerObject(ee.Geometry.Point([22, 30]), 4); fassa
 ```
->
-> Serve per rendere la funzione open access.
+
