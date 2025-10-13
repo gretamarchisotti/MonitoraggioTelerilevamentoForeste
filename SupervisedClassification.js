@@ -8,17 +8,20 @@ print(polygons);
 
 // calculate BAP composite
 var library = require("users/sfrancini/bap:library"); 
-var BAPCS = library.BAP(null, "08-01", 30, 70, 0.7, 0.2, 0.3, 1500); // La funzione del BAP prende diversi argomenti: target day, days range, percentuale di copertura delle nuvole
-var predictors = BAPCS.filter(ee.Filter.calendarRange(2022, 2022, "year")).first();
+var BAPCS = library.BAP(null, "08-01", 30, 70, 0.7, 0.2, 0.3, 1500);
+// La funzione del BAP prende diversi argomenti: null crea immagini a scala globale; se inserisco la geometria posso creare un'immagine solo per la mia area di studio
+// Altri argomenti: target day, days range, percentuale di copertura delle nuvole; ultimi 4 da ignorare
+// Se non seleziono l'anno, di default produce un coomposite per ogni anno dal 1984
+var predictors = BAPCS.filter(ee.Filter.calendarRange(2022, 2022, "year")).first(); // Filtro per ottenere una sola immagine del 2022
 print(predictors)
 // var predictors = BAP_300_2010;
 
-// 
 // Use these bands for prediction.
 var bands = ["blue", "green", "red", "nir", "swir1", "swir2"];
 // var bands = BAP_300_2010.bandNames()
 
 // Get the values for all pixels in each polygon in the training.
+// La funzione .sampleRegions() prende l'immagine (predictors), e per ogni pixel estrae la classe, con i valori delle bande
 var training = predictors.sampleRegions({
 // Get the sample from the polygons FeatureCollection.
 collection: polygons,
@@ -29,7 +32,7 @@ scale: 30
 });
 
 // print(training.first());
-// print(training.size());
+// print(training.size()); // .size() indica il numero di pixel contenuti nel training
 
 // Create an RF classifier with custom parameters.
 var classifier = ee.Classifier.smileRandomForest({numberOfTrees:10})
@@ -38,7 +41,7 @@ var classifier = ee.Classifier.smileRandomForest({numberOfTrees:10})
 var trained = classifier.train(training, 'class', bands);
 
 // Classify the image.
-var classified = predictors.classify(trained);
+var classified = predictors.classify(trained); // Usiamo il modello per classificare i predittori
 
 // Display the classification result and the input image.
 Map.setCenter(-62.836, -9.2399, 11);
