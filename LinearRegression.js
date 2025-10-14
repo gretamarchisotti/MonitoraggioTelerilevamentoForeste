@@ -1,4 +1,6 @@
-// prepare refence data
+// DEM: Digital Elevation Model, che indica per ogni pixel la quota
+
+// Prepare refence data
 nfi_gsv = nfi_gsv.filterBounds(geometry);
 // Map.addLayer(nfi_gsv)
 
@@ -6,39 +8,42 @@ nfi_gsv = nfi_gsv.filterBounds(geometry);
 var library = require("users/sfrancini/speciesClassification:library"); 
 
 // Medoid composite
-var medoidVariables = library.medoidComposite("2018-06-15", "2018-08-15", "2018");
+var medoidVariables = library.medoidComposite("2018-06-15", "2018-08-15", "2018"); //Funzione per calcolare il medoid che calcola anche degli indici
 Map.addLayer(medoidVariables, {bands: ["2018red", "2018green", "2018blue"], min:0, max: 3000})
 
 // Temperature
 var temperature = c.filter(ee.Filter.calendarRange(2010, 2020, "year"))
-.select("mean_2m_air_temperature").mean().subtract(273.15);
+                   .select("mean_2m_air_temperature").mean().subtract(273.15); // Con .substract() passo dai °K ai °C
+
 // Precipitation
 var precipitation = c.filter(ee.Filter.calendarRange(2010, 2020, "year"))
-.select("total_precipitation").median();
+                     .select("total_precipitation").median();
 
-//  merge the images
+
+//  Merge the images
+// Crea un'immagine, chiamata predictors, che contiene tutti i predittori, cioè le variabili indipendenti
 var predictors = ee.Image.cat([medoidVariables, 
                                dem.select(0).mean(),
                                temperature,
                                precipitation])
-                               .addBands(ee.Image.pixelCoordinates('EPSG:4326'))
+                               .addBands(ee.Image.pixelCoordinates('EPSG:4326')) //Aggiungo una banda che indica per ogni pixel le coordinate di latitudine e longitudine
                                .float();
 
 // STEP 1 *******************************************************************************************************
+// Creo il dataset di training e lo salvo
 
-// Perform the extraction and create the training dataset that combines the independent variables (predictors) 
-// with the dependent variable (nfi gsv)
-
+// Perform the extraction and create the training dataset that combines the independent variables (predictors) with the dependent variable (nfi gsv)
 var trainingDataset = predictors.reduceRegions({
-collection: nfi_gsv, 
-reducer: ee.Reducer.first(), 
-scale: 20
+                                                collection: nfi_gsv, 
+                                                reducer: ee.Reducer.first(), // Prende il pixel più vicino
+                                                scale: 20 // Risoluzione spaziale
 });
 
+// Salvo i dati sottoforma di tabella
 Export.table.toAsset({
-collection: trainingDataset, 
-description: "trainingDataset", 
-assetId: "projects/planetunifi/assets/UNIBO/trainingDataset"
+                    collection: trainingDataset, //Collection da esportare
+                    description: "trainingDataset", //Nome che gli do
+                    assetId: "projects/planetunifi/assets/UNIBO/trainingDataset" //Percorso dell'asset (dato) che ho salvato
 })
 
 // STEP 2 *******************************************************************************************************
